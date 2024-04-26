@@ -77,7 +77,11 @@ class DataFrame:
             for i, row in enumerate(self.data[:df_len])
         ]
 
-        return "\n".join([headers, separator] + rows)
+        hidden_rows = len(self.data)-df_len
+        return "\n".join(
+            [headers, separator] +
+            rows
+        ) + f"\n{hidden_rows} rows have been hidden."
 
     def add_row(self, row_data: typing.List | typing.Tuple):
         """
