@@ -78,10 +78,18 @@ class DataFrame:
         ]
 
         hidden_rows = len(self.data)-df_len
+        str_hidden_rows = f"\n{abs(hidden_rows)} rows have been hidden."
+
+        if len(self.data) > df_len:
+            return "\n".join(
+                [headers, separator] +
+                rows
+            ) + str_hidden_rows
+
         return "\n".join(
             [headers, separator] +
             rows
-        ) + f"\n{hidden_rows} rows have been hidden."
+        )
 
     def add_row(self, row_data: typing.List | typing.Tuple):
         """
@@ -176,3 +184,17 @@ class DataFrame:
         """
 
         return DataFrame(self.data[-1-n::], self.columns)
+
+    def find(self, value: typing.Any, column: str):
+        """
+        Find a all rows of value in a Data Frame.
+        """
+
+        column_data = [
+            row for row in self.data if value in row[
+                self.columns.index(column)
+            ]
+        ]
+
+        self.data = column_data
+        return self
