@@ -12,20 +12,6 @@ import csv
 import typing
 
 
-def read_csv(file_name) -> typing.List[typing.List]:
-    """
-    Similarly to getting a text file,
-    we return comma seperated values data.
-    """
-
-    csv_data = []
-    with open(file_name, 'r', newline='', encoding='utf-8') as csvfile:
-        csv_reader = csv.reader(csvfile)
-        for row in csv_reader:
-            csv_data.append(row)
-    return csv_data
-
-
 class DataFrame:
     """
     A heterogeneous tabular data structure with rows and columns.
@@ -50,6 +36,8 @@ class DataFrame:
         """
 
         df_len = 50
+        top_rows = 5
+        btm_rows = 5
 
         index_column = "Index"
         index_width = len(index_column) + 1
@@ -78,12 +66,15 @@ class DataFrame:
         ]
 
         hidden_rows = len(self.data)-df_len
-        str_hidden_rows = f"\n{abs(hidden_rows)} rows have been hidden."
+        str_hidden_rows = f"\n{abs(hidden_rows)} " + \
+            f"rows x {len(self.columns)} columns."
 
         if len(self.data) > df_len:
             return "\n".join(
                 [headers, separator] +
-                rows
+                rows[:top_rows] + [
+                    "- "*int(len(separator)/2)
+                ] + rows[-btm_rows::]
             ) + str_hidden_rows
 
         return "\n".join(
@@ -198,3 +189,31 @@ class DataFrame:
 
         self.data = column_data
         return self
+
+
+def read_csv(file_name, columns: typing.List = None) -> DataFrame:
+    """
+    Similarly to getting a text file,
+    we return comma seperated values data.
+    """
+
+    if not columns:
+        csv_data = []
+        with open(file_name, 'r', newline='', encoding='utf-8') as csvfile:
+            csv_reader = csv.reader(csvfile)
+            for row in csv_reader:
+                csv_data.append(row)
+
+        return DataFrame(
+            data=csv_data,
+            columns=["N/A"] * len(csv_data[0])
+        )
+
+    return DataFrame(
+        data=csv_data,
+        columns=columns
+    )
+
+
+df = read_csv("task1_4_railway_network.csv")
+print(df)
